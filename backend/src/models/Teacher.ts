@@ -201,7 +201,7 @@ const TeacherSchema = new Schema<ITeacher>({
 }, {
   timestamps: true,
   toJSON: {
-    transform: function(doc, ret) {
+    transform: function(doc: any, ret: any) {
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;
@@ -309,7 +309,7 @@ TeacherSchema.methods.addPaymentRecord = function(amount: number, month: string,
   }
   
   // Check if payment for this month-year already exists
-  const existingPayment = this.salary.paymentHistory.find(payment => 
+  const existingPayment = this.salary.paymentHistory.find((payment: any) => 
     payment.month === month && payment.year === year
   );
   

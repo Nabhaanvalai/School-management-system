@@ -485,3 +485,140 @@ export const studentFilterSchema = Joi.object({
       'string.max': 'Search term cannot exceed 100 characters'
     })
 }).concat(paginationSchema);
+
+export const updateTeacherSchema = Joi.object({
+  name: Joi.string()
+    .min(2)
+    .max(100)
+    .messages({
+      'string.min': 'Name must be at least 2 characters long',
+      'string.max': 'Name cannot exceed 100 characters'
+    }),
+  subjects: Joi.array()
+    .items(Joi.string())
+    .min(1)
+    .messages({
+      'array.min': 'At least one subject is required'
+    }),
+  phone: Joi.string()
+    .pattern(/^\+?[\d\s\-\(\)]{10,15}$/)
+    .messages({
+      'string.pattern.base': 'Please provide a valid phone number'
+    }),
+  email: Joi.string()
+    .email()
+    .messages({
+      'string.email': 'Please provide a valid email address'
+    }),
+  address: Joi.string()
+    .min(10)
+    .max(500)
+    .messages({
+      'string.min': 'Address must be at least 10 characters long',
+      'string.max': 'Address cannot exceed 500 characters'
+    }),
+  salary: Joi.object({
+    amount: Joi.number()
+      .positive()
+      .messages({
+        'number.positive': 'Salary amount must be positive'
+      }),
+    status: Joi.string()
+      .valid('paid', 'unpaid')
+      .messages({
+        'any.only': 'Salary status must be either paid or unpaid'
+      })
+  }),
+  isActive: Joi.boolean()
+});
+
+export const teacherFilterSchema = Joi.object({
+  subjects: Joi.string(), // Will be split by comma in controller
+  standard: Joi.string(),
+  section: Joi.string(),
+  salaryStatus: Joi.string()
+    .valid('paid', 'unpaid')
+    .messages({
+      'any.only': 'Salary status must be either paid or unpaid'
+    }),
+  isActive: Joi.string()
+    .valid('true', 'false')
+    .messages({
+      'any.only': 'isActive must be true or false'
+    }),
+  search: Joi.string()
+    .max(100)
+    .messages({
+      'string.max': 'Search term cannot exceed 100 characters'
+    })
+}).concat(paginationSchema);
+
+export const teacherAssignmentSchema = Joi.object({
+  standard: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Standard is required'
+    }),
+  section: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Section is required'
+    }),
+  subject: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Subject is required'
+    }),
+  academicYear: Joi.string()
+    .messages({
+      'string.base': 'Academic year must be a string'
+    })
+});
+
+export const salaryUpdateSchema = Joi.object({
+  status: Joi.string()
+    .valid('paid', 'unpaid')
+    .required()
+    .messages({
+      'any.only': 'Status must be either paid or unpaid',
+      'any.required': 'Status is required'
+    }),
+  amount: Joi.number()
+    .positive()
+    .when('status', {
+      is: 'paid',
+      then: Joi.optional(),
+      otherwise: Joi.forbidden()
+    })
+    .messages({
+      'number.positive': 'Amount must be positive',
+      'any.unknown': 'Amount is only allowed when status is paid'
+    }),
+  month: Joi.string()
+    .valid('January', 'February', 'March', 'April', 'May', 'June',
+           'July', 'August', 'September', 'October', 'November', 'December')
+    .when('amount', {
+      is: Joi.exist(),
+      then: Joi.required(),
+      otherwise: Joi.optional()
+    })
+    .messages({
+      'any.only': 'Invalid month name',
+      'any.required': 'Month is required when amount is provided'
+    }),
+  year: Joi.number()
+    .integer()
+    .min(2000)
+    .max(new Date().getFullYear() + 1)
+    .when('amount', {
+      is: Joi.exist(),
+      then: Joi.required(),
+      otherwise: Joi.optional()
+    })
+    .messages({
+      'number.integer': 'Year must be an integer',
+      'number.min': 'Year must be 2000 or later',
+      'number.max': 'Year cannot be more than next year',
+      'any.required': 'Year is required when amount is provided'
+    })
+});

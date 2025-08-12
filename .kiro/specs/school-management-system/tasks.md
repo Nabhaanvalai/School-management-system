@@ -83,7 +83,6 @@
 
 - [x] 4.1 Create Student CRUD Operations
 
-
   - Implement POST /api/students endpoint for adding new students
   - Create GET /api/students with filtering by standard/section
   - Add PUT /api/students/:id for updating student details
@@ -91,10 +90,7 @@
   - Write unit tests for student CRUD operations
   - _Requirements: 2.1, 2.2, 2.3_
 
-- [-] 4.2 Implement Student Status Management
-
-
-
+- [x] 4.2 Implement Student Status Management
 
   - Create endpoint for marking students as "Left" with leaving date
   - Implement student archiving instead of permanent deletion
@@ -103,7 +99,9 @@
   - _Requirements: 2.4, 2.5, 2.6_
 
 - [ ] 5. Teacher Management API Implementation
-- [ ] 5.1 Create Teacher CRUD Operations
+
+
+- [x] 5.1 Create Teacher CRUD Operations
 
   - Implement POST /api/teachers for adding new teachers
   - Create GET /api/teachers with assignment details
@@ -112,7 +110,7 @@
   - Write unit tests for teacher management operations
   - _Requirements: 3.1, 3.2, 3.4_
 
-- [ ] 5.2 Implement Teacher Assignment System
+- [x] 5.2 Implement Teacher Assignment System
 
   - Create endpoints for assigning teachers to subjects and classes
   - Add validation for teacher assignment conflicts

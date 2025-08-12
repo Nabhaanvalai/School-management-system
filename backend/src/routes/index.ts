@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import authRoutes from './authRoutes';
 import studentRoutes from './studentRoutes';
+import teacherRoutes from './teacherRoutes';
 
 const router = Router();
 
@@ -14,6 +15,9 @@ router.use('/auth', authRoutes);
 
 // Student management routes
 router.use('/students', studentRoutes);
+
+// Teacher management routes
+router.use('/teachers', teacherRoutes);
 
 // Health check for API
 router.get('/health', (req, res) => {

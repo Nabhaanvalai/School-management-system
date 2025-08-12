@@ -1,9 +1,11 @@
 import request from 'supertest';
-import app from '../../server';
+import createTestApp from '../testServer';
 import { Student } from '../../models/Student';
 import { User } from '../../models/User';
 import { JWTUtils } from '../../utils/jwtUtils';
 import mongoose from 'mongoose';
+
+const app = createTestApp();
 
 describe('Student Status Management Integration Tests', () => {
   let adminToken: string;
@@ -20,7 +22,9 @@ describe('Student Status Management Integration Tests', () => {
       role: 'admin',
       profile: {
         name: 'Test Admin',
-        employeeId: 'ADM001'
+        employeeId: 'ADM001',
+        department: 'Administration',
+        phone: '1234567890'
       }
     });
 
@@ -32,7 +36,9 @@ describe('Student Status Management Integration Tests', () => {
         name: 'Test Teacher',
         employeeId: 'TCH001',
         subjects: ['Math'],
-        assignedClasses: [{ standard: '10', section: 'A', subject: 'Math' }]
+        phone: '1234567891',
+        address: '123 Teacher Street',
+        dateOfJoining: new Date('2020-01-01')
       }
     });
 
