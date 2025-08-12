@@ -35,6 +35,14 @@ export interface IStudent extends Document {
   getClassIdentifier(): string;
 }
 
+// Student Model interface with static methods
+export interface IStudentModel extends mongoose.Model<IStudent> {
+  findByClass(standard: string, section: string): Promise<IStudent[]>;
+  getCountByClass(standard: string, section: string): Promise<number>;
+  findByStatus(status: StudentStatus): Promise<IStudent[]>;
+  isRollNoUnique(rollNo: string, standard: string, section: string, excludeId?: string): Promise<boolean>;
+}
+
 // Student Schema
 const StudentSchema = new Schema<IStudent>({
   rollNo: {
@@ -168,7 +176,7 @@ const StudentSchema = new Schema<IStudent>({
     transform: function(doc, ret) {
       ret.id = ret._id;
       delete ret._id;
-      delete ret.__v;
+      delete (ret as any).__v;
       return ret;
     }
   }
@@ -267,4 +275,4 @@ StudentSchema.statics.isRollNoUnique = async function(rollNo: string, standard: 
   return !existingStudent;
 };
 
-export const Student = mongoose.model<IStudent>('Student', StudentSchema);
+export const Student = mongoose.model<IStudent, IStudentModel>('Student', StudentSchema);

@@ -351,6 +351,77 @@ export class StudentService {
   }
 
   /**
+   * Mark student as left with specific leaving date
+   */
+  static async markStudentAsLeft(id: string, leavingDate?: string): Promise<StudentServiceResult> {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return {
+          success: false,
+          message: 'Invalid student ID'
+        };
+      }
+
+      const student = await Student.findById(id);
+      if (!student) {
+        return {
+          success: false,
+          message: 'Student not found'
+        };
+      }
+
+      if (student.status === 'left') {
+        return {
+          success: false,
+          message: 'Student is already marked as left'
+        };
+      }
+
+      // Parse leaving date if provided, otherwise use current date
+      const parsedLeavingDate = leavingDate ? new Date(leavingDate) : new Date();
+      
+      // Validate leaving date
+      if (isNaN(parsedLeavingDate.getTime())) {
+        return {
+          success: false,
+          message: 'Invalid leaving date format'
+        };
+      }
+
+      if (parsedLeavingDate < student.admissionDate) {
+        return {
+          success: false,
+          message: 'Leaving date cannot be before admission date'
+        };
+      }
+
+      if (parsedLeavingDate > new Date()) {
+        return {
+          success: false,
+          message: 'Leaving date cannot be in the future'
+        };
+      }
+
+      // Mark student as left with the specified date
+      student.markAsLeft(parsedLeavingDate);
+      await student.save();
+
+      return {
+        success: true,
+        message: 'Student marked as left successfully',
+        data: student
+      };
+    } catch (error: any) {
+      console.error('Mark student as left service error:', error);
+      return {
+        success: false,
+        message: 'Failed to mark student as left',
+        error: error.message
+      };
+    }
+  }
+
+  /**
    * Archive student (soft delete)
    */
   static async archiveStudent(id: string): Promise<StudentServiceResult> {
@@ -390,21 +461,28 @@ export class StudentService {
   }
 
   /**
-   * Get student count by class
+   * Get student count by class with detailed statistics
    */
   static async getStudentCountByClass(): Promise<StudentServiceResult> {
     try {
       const counts = await Student.aggregate([
-        {
-          $match: { status: 'active' }
-        },
         {
           $group: {
             _id: {
               standard: '$standard',
               section: '$section'
             },
-            count: { $sum: 1 }
+            totalStudents: { $sum: 1 },
+            activeStudents: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'active'] }, 1, 0]
+              }
+            },
+            leftStudents: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'left'] }, 1, 0]
+              }
+            }
           }
         },
         {
@@ -412,10 +490,12 @@ export class StudentService {
             _id: 0,
             standard: '$_id.standard',
             section: '$_id.section',
-            count: 1,
             classIdentifier: {
               $concat: ['$_id.standard', '-', '$_id.section']
-            }
+            },
+            totalStudents: 1,
+            activeStudents: 1,
+            leftStudents: 1
           }
         },
         {
@@ -426,10 +506,45 @@ export class StudentService {
         }
       ]);
 
+      // Also get overall statistics
+      const overallStats = await Student.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalStudents: { $sum: 1 },
+            activeStudents: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'active'] }, 1, 0]
+              }
+            },
+            leftStudents: {
+              $sum: {
+                $cond: [{ $eq: ['$status', 'left'] }, 1, 0]
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            totalStudents: 1,
+            activeStudents: 1,
+            leftStudents: 1
+          }
+        }
+      ]);
+
       return {
         success: true,
         message: 'Student counts retrieved successfully',
-        data: counts
+        data: {
+          classCounts: counts,
+          overallStats: overallStats[0] || {
+            totalStudents: 0,
+            activeStudents: 0,
+            leftStudents: 0
+          }
+        }
       };
     } catch (error: any) {
       console.error('Get student count service error:', error);

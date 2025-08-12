@@ -186,6 +186,39 @@ export class StudentController {
   }
 
   /**
+   * Mark student as left with leaving date
+   * PUT /api/students/:id/mark-left
+   */
+  static async markStudentAsLeft(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { leavingDate } = req.body;
+      const result = await StudentService.markStudentAsLeft(id, leavingDate);
+
+      if (result.success) {
+        res.status(200).json({
+          success: true,
+          message: result.message,
+          data: result.data
+        });
+      } else {
+        const statusCode = result.message === 'Student not found' ? 404 : 400;
+        res.status(statusCode).json({
+          success: false,
+          message: result.message,
+          error: result.error
+        });
+      }
+    } catch (error) {
+      console.error('Mark student as left controller error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
+    }
+  }
+
+  /**
    * Archive student (soft delete)
    * DELETE /api/students/:id
    */

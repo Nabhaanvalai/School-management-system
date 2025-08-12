@@ -71,20 +71,17 @@
 
 - [x] 3.3 Build Authentication API Endpoints
 
-
   - Implement POST /api/auth/login with credential validation
   - Create POST /api/auth/refresh for token renewal
   - Add POST /api/auth/logout with token invalidation
   - Write integration tests for authentication endpoints
   - _Requirements: 1.1, 1.2, 1.4_
+
 -
 
 - [-] 4. Student Management API Implementation
 
-
-
-- [-] 4.1 Create Student CRUD Operations
-
+- [x] 4.1 Create Student CRUD Operations
 
 
   - Implement POST /api/students endpoint for adding new students
@@ -94,7 +91,10 @@
   - Write unit tests for student CRUD operations
   - _Requirements: 2.1, 2.2, 2.3_
 
-- [ ] 4.2 Implement Student Status Management
+- [-] 4.2 Implement Student Status Management
+
+
+
 
   - Create endpoint for marking students as "Left" with leaving date
   - Implement student archiving instead of permanent deletion

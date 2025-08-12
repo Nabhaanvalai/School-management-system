@@ -103,6 +103,19 @@ router.put(
 );
 
 /**
+ * @route   PUT /api/students/:id/mark-left
+ * @desc    Mark student as left with leaving date
+ * @access  Private (Admin only)
+ * @body    { leavingDate?: string }
+ */
+router.put(
+  '/:id/mark-left',
+  authenticateToken,
+  requireRole(['admin']),
+  StudentController.markStudentAsLeft
+);
+
+/**
  * @route   DELETE /api/students/:id
  * @desc    Archive student (soft delete)
  * @access  Private (Admin only)
