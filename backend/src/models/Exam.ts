@@ -231,7 +231,7 @@ const ExamSchema = new Schema<IExam>({
 }, {
   timestamps: true,
   toJSON: {
-    transform: function(doc, ret) {
+    transform: function(doc, ret: any) {
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;
@@ -288,16 +288,17 @@ ExamSchema.pre<IExam>('save', function(next) {
       
       for (let i = 0; i < sortedSubjects.length - 1; i++) {
         const current = sortedSubjects[i];
-        const next = sortedSubjects[i + 1];
+        const nextSubject = sortedSubjects[i + 1];
         
         const currentEnd = current.endTime.split(':').map(Number);
-        const nextStart = next.startTime.split(':').map(Number);
+        const nextStart = nextSubject.startTime.split(':').map(Number);
         
         const currentEndMinutes = currentEnd[0] * 60 + currentEnd[1];
         const nextStartMinutes = nextStart[0] * 60 + nextStart[1];
         
         if (currentEndMinutes > nextStartMinutes) {
-          return next(new Error(`Time conflict between ${current.subject} and ${next.subject} on ${date}`));
+          const error = new Error(`Time conflict between ${current.subject} and ${nextSubject.subject} on ${date}`);
+          return next(error);
         }
       }
     }

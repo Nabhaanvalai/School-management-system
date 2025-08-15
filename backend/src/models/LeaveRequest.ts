@@ -41,6 +41,15 @@ export interface ILeaveRequest extends Document {
   canBeModified(): boolean;
 }
 
+// Static methods interface
+export interface ILeaveRequestModel extends mongoose.Model<ILeaveRequest> {
+  findByTeacher(teacherId: string, academicYear?: string): Promise<ILeaveRequest[]>;
+  findPendingLeaves(academicYear?: string): Promise<ILeaveRequest[]>;
+  findByDateRange(startDate: Date, endDate: Date, status?: LeaveStatus, academicYear?: string): Promise<ILeaveRequest[]>;
+  findOverlappingLeaves(teacherId: string, startDate: Date, endDate: Date, excludeId?: string): Promise<ILeaveRequest[]>;
+  getLeaveSummary(teacherId: string, academicYear: string): Promise<any>;
+}
+
 // LeaveRequest Schema
 const LeaveRequestSchema = new Schema<ILeaveRequest>({
   teacherId: {
@@ -501,4 +510,4 @@ LeaveRequestSchema.statics.getLeaveSummary = async function(
   return result;
 };
 
-export const LeaveRequest = mongoose.model<ILeaveRequest>('LeaveRequest', LeaveRequestSchema);
+export const LeaveRequest = mongoose.model<ILeaveRequest, ILeaveRequestModel>('LeaveRequest', LeaveRequestSchema);

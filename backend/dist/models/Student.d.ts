@@ -26,9 +26,11 @@ export interface IStudent extends Document {
     getAge(): number;
     getClassIdentifier(): string;
 }
-export declare const Student: mongoose.Model<IStudent, {}, {}, {}, mongoose.Document<unknown, {}, IStudent, {}, {}> & IStudent & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
-}, any>;
+export interface IStudentModel extends mongoose.Model<IStudent> {
+    findByClass(standard: string, section: string): Promise<IStudent[]>;
+    getCountByClass(standard: string, section: string): Promise<number>;
+    findByStatus(status: StudentStatus): Promise<IStudent[]>;
+    isRollNoUnique(rollNo: string, standard: string, section: string, excludeId?: string): Promise<boolean>;
+}
+export declare const Student: IStudentModel;
 //# sourceMappingURL=Student.d.ts.map

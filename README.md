@@ -1,6 +1,6 @@
-# School Management System
+# EduSys
 
-A comprehensive school management system with role-based access control for administrators, teachers, students, and parents.
+A comprehensive education management system with role-based access control for administrators, teachers, students, and parents.
 
 ## Project Structure
 

@@ -148,7 +148,7 @@ const TimetableSchema = new Schema<ITimetable>({
     transform: function(doc, ret) {
       ret.id = ret._id;
       delete ret._id;
-      delete ret.__v;
+      delete (ret as any).__v;
       return ret;
     }
   }
@@ -194,16 +194,16 @@ TimetableSchema.pre<ITimetable>('save', function(next) {
     
     for (let i = 0; i < sortedPeriods.length - 1; i++) {
       const current = sortedPeriods[i];
-      const next = sortedPeriods[i + 1];
+      const nextPeriod = sortedPeriods[i + 1];
       
       const currentEnd = current.endTime.split(':').map(Number);
-      const nextStart = next.startTime.split(':').map(Number);
+      const nextStart = nextPeriod.startTime.split(':').map(Number);
       
       const currentEndMinutes = currentEnd[0] * 60 + currentEnd[1];
       const nextStartMinutes = nextStart[0] * 60 + nextStart[1];
       
       if (currentEndMinutes > nextStartMinutes) {
-        return next(new Error(`Time conflict between ${current.slot} and ${next.slot} on ${daySchedule.day}`));
+        return next(new Error(`Time conflict between ${current.slot} and ${nextPeriod.slot} on ${daySchedule.day}`));
       }
     }
   }

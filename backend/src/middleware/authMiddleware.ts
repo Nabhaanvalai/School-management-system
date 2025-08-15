@@ -3,6 +3,15 @@ import { JWTUtils, JWTPayload } from '../utils/jwtUtils';
 import { AuthService } from '../services/authService';
 import { UserRole } from '../models/User';
 
+// Define the authenticated request type
+export interface AuthenticatedRequest extends Request {
+  user: {
+    id: string;
+    email: string;
+    role: UserRole;
+  };
+}
+
 // Extend Express Request interface to include user information
 declare global {
   namespace Express {

@@ -32,9 +32,12 @@ export interface ILeaveRequest extends Document {
     getFormattedDateRange(): string;
     canBeModified(): boolean;
 }
-export declare const LeaveRequest: mongoose.Model<ILeaveRequest, {}, {}, {}, mongoose.Document<unknown, {}, ILeaveRequest, {}, {}> & ILeaveRequest & Required<{
-    _id: unknown;
-}> & {
-    __v: number;
-}, any>;
+export interface ILeaveRequestModel extends mongoose.Model<ILeaveRequest> {
+    findByTeacher(teacherId: string, academicYear?: string): Promise<ILeaveRequest[]>;
+    findPendingLeaves(academicYear?: string): Promise<ILeaveRequest[]>;
+    findByDateRange(startDate: Date, endDate: Date, status?: LeaveStatus, academicYear?: string): Promise<ILeaveRequest[]>;
+    findOverlappingLeaves(teacherId: string, startDate: Date, endDate: Date, excludeId?: string): Promise<ILeaveRequest[]>;
+    getLeaveSummary(teacherId: string, academicYear: string): Promise<any>;
+}
+export declare const LeaveRequest: ILeaveRequestModel;
 //# sourceMappingURL=LeaveRequest.d.ts.map

@@ -271,7 +271,7 @@ TeacherSchema.methods.addPaymentRecord = function (amount, month, year) {
         this.salary.paymentHistory = [];
     }
     // Check if payment for this month-year already exists
-    const existingPayment = this.salary.paymentHistory.find(payment => payment.month === month && payment.year === year);
+    const existingPayment = this.salary.paymentHistory.find((payment) => payment.month === month && payment.year === year);
     if (existingPayment) {
         throw new Error(`Payment for ${month} ${year} already recorded`);
     }
